@@ -3,7 +3,7 @@
 [![Github All Releases](https://img.shields.io/github/downloads/wrealaero/rbxfpsunlocker-osx/total.svg?color=blue)]()  
 [![Discord](https://img.shields.io/badge/chat-discord-blue)](https://discord.gg/YOURSERVER)  
 
-**The easiest way to remove FPS limits in Roblox on Mac!** 🎮💨 Works on both **Intel** and **Apple Silicon** Macs.  
+**The easiest way to remove FPS cap in Roblox on Mac!** 🎮 Works on both **Intel** and **Apple Silicon** Macs.  
 
 ---
 
@@ -40,25 +40,14 @@ After that, **BOOM!** 🎉 Your FPS unlocker is installed!
 
 ## **🎮 How to Use?**  
 
-After installing, **just open Roblox** and enjoy **smoother, faster gameplay!**  
-Want **even more FPS?** Choose **Vulkan** when the script asks you!  
+After installing, **just open Roblox** and enjoy **way smoother gameplay**  
+Want **even more FPS?** Choose **Vulkan!** 
 
-📌 **Note:** If your Mac screen is 60Hz, you won’t see big FPS changes unless you use **Vulkan**!  
-
----
-
-## **📸 Screenshot**  
-
-Here’s what it looks like when you run the script:  
-
-![FPS Unlocker Screenshot](https://github.com/wrealaero/rbxfpsunlocker-osx/assets/YOUR_IMAGE.png)  
+📌 **Note:** If your Mac screen is 60Hz, you won’t see big FPS changes unless you use **Vulkan**
 
 ---
-
 ## **❤️ Credits**  
 
 👑 **[wrealaero](https://github.com/wrealaero)** – Yes me i made this awesome shit!  
 🛠️ **Testers & Supporters** – Thanks to everyone who helped make this better!  
 💡 **[lanylow](https://github.com/lanylow/rbxfpsunlocker-osx)** – Inspiration for this!
-
-🚀 **Enjoy unlimited FPS?** Share this with your friends!  
