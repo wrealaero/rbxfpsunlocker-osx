@@ -57,7 +57,8 @@ Here’s what it looks like when you run the script:
 
 ## **❤️ Credits**  
 
-👑 **[wrealaero](https://github.com/wrealaero)** – Made this awesome FPS unlocker!  
+👑 **[wrealaero](https://github.com/wrealaero)** – Yes me i made this awesome shit!  
 🛠️ **Testers & Supporters** – Thanks to everyone who helped make this better!  
+💡 **[lanylow](https://github.com/lanylow/rbxfpsunlocker-osx)** – Inspiration for this!
 
 🚀 **Enjoy unlimited FPS?** Share this with your friends!  
