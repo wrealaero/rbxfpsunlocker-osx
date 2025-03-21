@@ -1,0 +1,76 @@
+#!/bin/sh
+
+targetFps=10000
+robloxPath="/Applications/Roblox.app"
+
+if [ ! -d "$robloxPath" ]; then
+  robloxPath="$HOME/Applications/Roblox.app"
+  
+  if [ ! -d "$robloxPath" ]; then
+    echo "❌ ERROR: Roblox installation not found."
+    exit 1
+  fi
+fi
+
+clientSettingsPath="$robloxPath/Contents/MacOS/ClientSettings"
+mkdir -p "$clientSettingsPath"
+
+echo "Select Rendering API:"
+echo "1) Vulkan (Max FPS, may break on external monitors)"
+echo "2) Metal (Stable, recommended)"
+echo "3) OpenGL (Stable, for older Macs)"
+read -r rendererChoice
+
+case "$rendererChoice" in
+  1)
+    disableMetal="true"
+    preferVulkan="true"
+    preferOpenGL="false"
+    ;;
+  2)
+    disableMetal="false"
+    preferVulkan="false"
+    preferOpenGL="false"
+    ;;
+  3)
+    disableMetal="true"
+    preferVulkan="false"
+    preferOpenGL="true"
+    ;;
+  *)
+    echo "⚠️ Invalid choice. Defaulting to Metal."
+    disableMetal="false"
+    preferVulkan="false"
+    preferOpenGL="false"
+    ;;
+esac
+
+echo "Enable Ultra Performance Mode? (yes/no)"
+read -r performanceMode
+
+if [ "$performanceMode" = "yes" ] || [ "$performanceMode" = "y" ]; then
+  graphicsTweaks='
+      "FFlagRenderHighlightFXAA": "false",
+      "FFlagDebugGraphicsDisableShadows": "true",
+      "FFlagDebugGraphicsDisablePBR": "true",
+      "FFlagDebugGraphicsDisableWaterReflection": "true",
+      "DFFlagGraphicsTextureStreaming": "false",
+      "DFIntTaskSchedulerBackgroundPriority": 3,
+      "DFIntTaskSchedulerEnableJobThreads": "true",
+      "DFIntTaskSchedulerNumThreads": 6
+  '
+else
+  graphicsTweaks=''
+fi
+
+clientSettings='{
+  "DFIntTaskSchedulerTargetFps": '"$targetFps"',
+  "FFlagDebugGraphicsDisableMetal": "'"$disableMetal"'",
+  "FFlagDebugGraphicsPreferVulkan": "'"$preferVulkan"'",
+  "FFlagDebugGraphicsPreferOpenGL": "'"$preferOpenGL"'",
+  '"$graphicsTweaks"'
+}'
+
+echo "$clientSettings" | jq '.' > "$clientSettingsPath/ClientAppSettings.json"
+
+echo "FPS BOOSTED"
