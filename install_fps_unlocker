@@ -7,7 +7,7 @@ if [ ! -d "$robloxPath" ]; then
   robloxPath="$HOME/Applications/Roblox.app"
   
   if [ ! -d "$robloxPath" ]; then
-    echo "❌ ERROR: Roblox installation not found."
+    echo "❌ Could Not Find Your Roblox, make sure it is installed."
     exit 1
   fi
 fi
@@ -15,39 +15,35 @@ fi
 clientSettingsPath="$robloxPath/Contents/MacOS/ClientSettings"
 mkdir -p "$clientSettingsPath"
 
-echo "Select Rendering API:"
-echo "1) Vulkan (Max FPS, may break on external monitors)"
-echo "2) Metal (Stable, recommended)"
-echo "3) OpenGL (Stable, for older Macs)"
+clear
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "🎮  ROBLOX FPS BOOSTER"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "🔥 Choose your Graphics Mode:"
+echo "1️⃣ Vulkan  (🚀 Most of your FPS, might break extra monitors)"
+echo "2️⃣ Metal   (✔️ Best for most Macs)"
+echo "3️⃣ OpenGL  (🖥️ Good for older Macs)"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 read -r rendererChoice
 
+disableMetal="false"
+preferVulkan="false"
+preferOpenGL="false"
+
 case "$rendererChoice" in
-  1)
-    disableMetal="true"
-    preferVulkan="true"
-    preferOpenGL="false"
-    ;;
-  2)
-    disableMetal="false"
-    preferVulkan="false"
-    preferOpenGL="false"
-    ;;
-  3)
-    disableMetal="true"
-    preferVulkan="false"
-    preferOpenGL="true"
-    ;;
-  *)
-    echo "⚠️ Invalid choice. Defaulting to Metal."
-    disableMetal="false"
-    preferVulkan="false"
-    preferOpenGL="false"
-    ;;
+  1) disableMetal="true"; preferVulkan="true";;
+  2) disableMetal="false";;
+  3) disableMetal="true"; preferOpenGL="true";;
+  *) echo "❌ Wrong Choice, going back to metal as default."; disableMetal="false";;
 esac
 
-echo "Enable Ultra Performance Mode? (yes/no)"
+clear
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "⚡ Wanna go TURBO MODE? (yes/no)"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 read -r performanceMode
 
+graphicsTweaks=""
 if [ "$performanceMode" = "yes" ] || [ "$performanceMode" = "y" ]; then
   graphicsTweaks='
       "FFlagRenderHighlightFXAA": "false",
@@ -57,20 +53,21 @@ if [ "$performanceMode" = "yes" ] || [ "$performanceMode" = "y" ]; then
       "DFFlagGraphicsTextureStreaming": "false",
       "DFIntTaskSchedulerBackgroundPriority": 3,
       "DFIntTaskSchedulerEnableJobThreads": "true",
-      "DFIntTaskSchedulerNumThreads": 6
+      "DFIntTaskSchedulerNumThreads": 6,
   '
-else
-  graphicsTweaks=''
 fi
 
-clientSettings='{
-  "DFIntTaskSchedulerTargetFps": '"$targetFps"',
-  "FFlagDebugGraphicsDisableMetal": "'"$disableMetal"'",
-  "FFlagDebugGraphicsPreferVulkan": "'"$preferVulkan"'",
-  "FFlagDebugGraphicsPreferOpenGL": "'"$preferOpenGL"'",
-  '"$graphicsTweaks"'
-}'
+clientSettings="{
+  \"DFIntTaskSchedulerTargetFps\": $targetFps,
+  \"FFlagDebugGraphicsDisableMetal\": \"$disableMetal\",
+  \"FFlagDebugGraphicsPreferVulkan\": \"$preferVulkan\",
+  \"FFlagDebugGraphicsPreferOpenGL\": \"$preferOpenGL\",
+  $graphicsTweaks
+}"
 
-echo "$clientSettings" | jq '.' > "$clientSettingsPath/ClientAppSettings.json"
+echo "$clientSettings" > "$clientSettingsPath/ClientAppSettings.json"
 
-echo "FPS BOOSTED"
+clear
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "✅ FPS UNCAPPED AND BOOSTED SUB TO WREALAERO! 🎮"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
