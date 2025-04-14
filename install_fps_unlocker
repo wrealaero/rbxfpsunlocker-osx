@@ -1,51 +1,121 @@
-#!/bin/sh
-
-targetFps=10000
-robloxPath="/Applications/Roblox.app"
-
-if [ ! -d "$robloxPath" ]; then
-  robloxPath="$HOME/Applications/Roblox.app"
+unlock_fps() {
+  clear
+  echo -e "\033[1;33m🔓 FPS Unlocker for Roblox\033[0m"
+  echo -e "\033[1;37m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\033[0m"
   
+  # Check if Roblox is installed
+  robloxPath="/Applications/Roblox.app"
   if [ ! -d "$robloxPath" ]; then
-    echo "❌ Could Not Find Your Roblox, make sure it is installed."
-    exit 1
+    robloxPath="$HOME/Applications/Roblox.app"
+    if [ ! -d "$robloxPath" ]; then
+      echo -e "\033[1;31m❌ Roblox not found! Please install Roblox first.\033[0m"
+      echo -e "\033[1;37mPress any key to return to menu...\033[0m"
+      read -n 1
+      roblox_tweaks_menu
+      return
+    fi
   fi
-fi
-
-clientSettingsPath="$robloxPath/Contents/MacOS/ClientSettings"
-mkdir -p "$clientSettingsPath"
-
-clear
-echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-echo "🎮  ROBLOX FPS BOOSTER"
-echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-echo "🔥 Choose your Graphics Mode:"
-echo "1️⃣ Vulkan  (🚀 Most of your FPS, might break extra monitors)"
-echo "2️⃣ Metal   (✔️ Best for most Macs)"
-echo "3️⃣ OpenGL  (🖥️ Good for older Macs)"
-echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-read -r rendererChoice
-
-disableMetal="false"
-preferVulkan="false"
-preferOpenGL="false"
-
-case "$rendererChoice" in
-  1) disableMetal="true"; preferVulkan="true";;
-  2) disableMetal="false";;
-  3) disableMetal="true"; preferOpenGL="true";;
-  *) echo "❌ Wrong Choice, going back to metal as default."; disableMetal="false";;
-esac
-
-clear
-echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-echo "⚡ Wanna go TURBO MODE? (yes/no)"
-echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-read -r performanceMode
-
-graphicsTweaks=""
-if [ "$performanceMode" = "yes" ] || [ "$performanceMode" = "y" ]; then
-  graphicsTweaks='
+  
+  echo -e "\033[1;32m✓ Roblox found at: $robloxPath\033[0m"
+  
+  # Create ClientSettings directory if it doesn't exist
+  clientSettingsPath="$robloxPath/Contents/MacOS/ClientSettings"
+  mkdir -p "$clientSettingsPath"
+  
+  # Backup existing settings if they exist
+  if [ -f "$clientSettingsPath/ClientAppSettings.json" ]; then
+    echo -e "\033[1;36mBacking up existing settings...\033[0m"
+    cp "$clientSettingsPath/ClientAppSettings.json" "$clientSettingsPath/ClientAppSettings.json.backup"
+  fi
+  
+  # Ask for target FPS
+  echo -e "\033[1;37m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\033[0m"
+  echo -e "\033[1;33m🎯 Set your target FPS:\033[0m"
+  echo -e "1) 60 FPS (stable for all Macs)"
+  echo -e "2) 120 FPS (good for most Macs)"
+  echo -e "3) 240 FPS (for powerful Macs)"
+  echo -e "4) Unlimited (may cause instability)"
+  echo -e "5) Custom value"
+  echo -e "\033[1;37m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\033[0m"
+  read -p "Choose an option (1-5): " fps_choice
+  
+  case "$fps_choice" in
+    1) targetFps=60;;
+    2) targetFps=120;;
+    3) targetFps=240;;
+    4) targetFps=10000;;
+    5) 
+      read -p "Enter custom FPS limit: " custom_fps
+      if [[ "$custom_fps" =~ ^[0-9]+$ ]]; then
+        targetFps=$custom_fps
+      else
+        echo -e "\033[1;31mInvalid input. Setting to 120 FPS.\033[0m"
+        targetFps=120
+      fi
+      ;;
+    *) 
+      echo -e "\033[1;31mInvalid choice. Setting to 120 FPS.\033[0m"
+      targetFps=120
+      ;;
+  esac
+  
+  # Graphics renderer selection
+  clear
+  echo -e "\033[1;33m🎮 ROBLOX FPS BOOSTER\033[0m"
+  echo -e "\033[1;37m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\033[0m"
+  echo -e "\033[1;33m🔥 Choose your Graphics Mode:\033[0m"
+  echo -e "1) Vulkan  (🚀 Highest FPS, might break external monitors)"
+  echo -e "2) Metal   (✔️ Best for most Macs)"
+  echo -e "3) OpenGL  (🖥️ Good for older Macs)"
+  echo -e "\033[1;37m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\033[0m"
+  read -p "Choose an option (1-3): " rendererChoice
+  
+  disableMetal="false"
+  preferVulkan="false"
+  preferOpenGL="false"
+  
+  case "$rendererChoice" in
+    1) disableMetal="true"; preferVulkan="true";;
+    2) disableMetal="false";;
+    3) disableMetal="true"; preferOpenGL="true";;
+    *) echo -e "\033[1;31mInvalid choice. Using Metal as default.\033[0m"; disableMetal="false";;
+  esac
+  
+  # Performance mode selection
+  clear
+  echo -e "\033[1;33m🎮 ROBLOX FPS BOOSTER\033[0m"
+  echo -e "\033[1;37m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\033[0m"
+  echo -e "\033[1;33m⚡ Performance Mode Options:\033[0m"
+  echo -e "1) Balanced (Good graphics with decent performance)"
+  echo -e "2) Performance (Better FPS with reduced graphics)"
+  echo -e "3) Ultra Performance (Maximum FPS, minimal graphics)"
+  echo -e "\033[1;37m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\033[0m"
+  read -p "Choose an option (1-3): " performanceChoice
+  
+  graphicsTweaks=""
+  
+  case "$performanceChoice" in
+    1) 
+      graphicsTweaks='
+      "FFlagRenderHighlightFXAA": "false",
+      "DFIntTaskSchedulerBackgroundPriority": 3,
+      "DFIntTaskSchedulerEnableJobThreads": "true",
+      "DFIntTaskSchedulerNumThreads": 6,
+      '
+      ;;
+    2) 
+      graphicsTweaks='
+      "FFlagRenderHighlightFXAA": "false",
+      "FFlagDebugGraphicsDisableShadows": "true",
+      "FFlagDebugGraphicsDisablePBR": "true",
+      "DFFlagGraphicsTextureStreaming": "false",
+      "DFIntTaskSchedulerBackgroundPriority": 3,
+      "DFIntTaskSchedulerEnableJobThreads": "true",
+      "DFIntTaskSchedulerNumThreads": 6,
+      '
+      ;;
+    3) 
+      graphicsTweaks='
       "FFlagRenderHighlightFXAA": "false",
       "FFlagDebugGraphicsDisableShadows": "true",
       "FFlagDebugGraphicsDisablePBR": "true",
@@ -53,21 +123,55 @@ if [ "$performanceMode" = "yes" ] || [ "$performanceMode" = "y" ]; then
       "DFFlagGraphicsTextureStreaming": "false",
       "DFIntTaskSchedulerBackgroundPriority": 3,
       "DFIntTaskSchedulerEnableJobThreads": "true",
+      "DFIntTaskSchedulerNumThreads": 8,
+      "DFIntTextureQualityLevel": 1,
+      "DFIntParticleQualityLevel": 1,
+      "FFlagDisablePostFx": "true",
+      '
+      ;;
+    *) 
+      echo -e "\033[1;31mInvalid choice. Using Balanced mode.\033[0m"
+      graphicsTweaks='
+      "FFlagRenderHighlightFXAA": "false",
+      "DFIntTaskSchedulerBackgroundPriority": 3,
+      "DFIntTaskSchedulerEnableJobThreads": "true",
       "DFIntTaskSchedulerNumThreads": 6,
-  '
-fi
-
-clientSettings="{
+      '
+      ;;
+  esac
+  
+  # Detect number of CPU cores for optimal thread count
+  cpu_cores=$(sysctl -n hw.ncpu)
+  if [ "$cpu_cores" -gt 4 ]; then
+    graphicsTweaks=$(echo "$graphicsTweaks" | sed "s/DFIntTaskSchedulerNumThreads\": [0-9]*/DFIntTaskSchedulerNumThreads\": $((cpu_cores-2))/")
+  fi
+  
+  # Create the settings file
+  clientSettings="{
   \"DFIntTaskSchedulerTargetFps\": $targetFps,
   \"FFlagDebugGraphicsDisableMetal\": \"$disableMetal\",
   \"FFlagDebugGraphicsPreferVulkan\": \"$preferVulkan\",
   \"FFlagDebugGraphicsPreferOpenGL\": \"$preferOpenGL\",
   $graphicsTweaks
+  \"FFlagEnableHDRPBR\": \"false\"
 }"
 
-echo "$clientSettings" > "$clientSettingsPath/ClientAppSettings.json"
-
-clear
-echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-echo "✅ FPS UNCAPPED AND BOOSTED SUB TO REALAERO! 🎮"
-echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+  echo "$clientSettings" > "$clientSettingsPath/ClientAppSettings.json"
+  
+  # Set permissions to ensure Roblox can read the file
+  chmod 644 "$clientSettingsPath/ClientAppSettings.json"
+  
+  clear
+  echo -e "\033[1;32m✅ FPS UNLOCKER SUCCESSFULLY INSTALLED!\033[0m"
+  echo -e "\033[1;37m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\033[0m"
+  echo -e "\033[1;36mSettings applied:\033[0m"
+  echo -e "• Target FPS: \033[1;33m$targetFps\033[0m"
+  echo -e "• Graphics Mode: \033[1;33m$([ "$preferVulkan" == "true" ] && echo "Vulkan" || [ "$preferOpenGL" == "true" ] && echo "OpenGL" || echo "Metal")\033[0m"
+  echo -e "• Performance Mode: \033[1;33m$([ "$performanceChoice" == "1" ] && echo "Balanced" || [ "$performanceChoice" == "2" ] && echo "Performance" || echo "Ultra Performance")\033[0m"
+  echo -e "\033[1;37m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\033[0m"
+  echo -e "\033[1;33mNote: Restart Roblox to apply changes.\033[0m"
+  echo -e "\033[1;37mPress any key to return to menu...\033[0m"
+  
+  read -n 1
+  roblox_tweaks_menu
+}
