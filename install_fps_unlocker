@@ -1,3 +1,5 @@
+#!/bin/bash
+
 unlock_fps() {
   clear
   echo -e "\033[1;33m🔓 FPS Unlocker for Roblox\033[0m"
@@ -9,10 +11,9 @@ unlock_fps() {
     robloxPath="$HOME/Applications/Roblox.app"
     if [ ! -d "$robloxPath" ]; then
       echo -e "\033[1;31m❌ Roblox not found! Please install Roblox first.\033[0m"
-      echo -e "\033[1;37mPress any key to return to menu...\033[0m"
+      echo -e "\033[1;37mPress any key to exit...\033[0m"
       read -n 1
-      roblox_tweaks_menu
-      return
+      exit
     fi
   fi
   
@@ -170,8 +171,11 @@ unlock_fps() {
   echo -e "• Performance Mode: \033[1;33m$([ "$performanceChoice" == "1" ] && echo "Balanced" || [ "$performanceChoice" == "2" ] && echo "Performance" || echo "Ultra Performance")\033[0m"
   echo -e "\033[1;37m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\033[0m"
   echo -e "\033[1;33mNote: Restart Roblox to apply changes.\033[0m"
-  echo -e "\033[1;37mPress any key to return to menu...\033[0m"
+  echo -e "\033[1;37mPress any key to exit...\033[0m"
   
   read -n 1
-  roblox_tweaks_menu
+  clear
 }
+
+# Actually run the function
+unlock_fps
